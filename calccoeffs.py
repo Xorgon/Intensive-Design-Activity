@@ -12,13 +12,14 @@ def area(width=currentWidth):
     return 0.876 * width + 2 * plateArea
 
 
-def coeffs(lift, drag, flowV=60.0, area=area(), density=1.225):
+def coeffs(lift, drag, flowV=60.0, area=area(), density=1.225, verbose=True):
     """ Computes and returns an array of CoL and CoD """
     coeffL = (2 * lift) / (flowV ** 2 * density * area)
     coeffD = (2 * drag) / (flowV ** 2 * density * area)
-    print ("Coefficient of lift = " + str(coeffL))
-    print ("Coefficient of drag = " + str(coeffD))
-    print ("Ratio = " + str(coeffL / coeffD))
+    if verbose:
+        print ("Coefficient of lift = " + str(coeffL))
+        print ("Coefficient of drag = " + str(coeffD))
+        print ("Ratio = " + str(coeffL / coeffD))
     return [coeffL, coeffD]
 
 
@@ -65,7 +66,8 @@ def wind_tunnel_test(F1, F2, flowV, temp_K=295,
     lift = F1 - weight - tare_lift
     drag = F2 - tare_drag
     small_area = 1.0/16.0 * area()
-    return coeffs(lift, drag, flowV, small_area, density(temp_K, pressure))
+    ro = density(temp_K, pressure)
+    return coeffs(lift, drag, flowV, small_area, ro, False)
 
 
 def drag(mm):

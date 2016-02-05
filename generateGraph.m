@@ -23,6 +23,4 @@ end
 delete(findall(0))
 bdclose('all')
 
-liftlabel('Coefficient of Lift')
-draglabel('Coefficient of Drag')
 surf(lift, drag, times)

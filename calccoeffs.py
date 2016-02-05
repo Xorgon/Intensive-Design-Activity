@@ -1,4 +1,5 @@
 import matplotlib
+import numpy as np
 
 plot = matplotlib.pyplot.plot
 
@@ -11,12 +12,8 @@ def area(width=currentWidth):
     return 0.876 * width + 2 * plateArea
 
 
-def coeffs(lift, drag, flowV, area=area(), density=1.225):
-    print(lift)
-    print(drag)
-    print(flowV)
-    print(area)
-    print(density)
+def coeffs(lift, drag, flowV=60.0, area=area(), density=1.225):
+    """ Computes and returns an array of CoL and CoD """
     coeffL = (2 * lift) / (flowV ** 2 * density * area)
     coeffD = (2 * drag) / (flowV ** 2 * density * area)
     print ("Coefficient of lift = " + str(coeffL))
@@ -26,6 +23,7 @@ def coeffs(lift, drag, flowV, area=area(), density=1.225):
 
 
 def incr_ratio(lift, drag, oLift=713.147, oDrag=125.562):
+    """ Calculates the ratio of increase for lift and drag """
     return (lift - oLift)/(drag - oDrag)
 
 
@@ -34,32 +32,25 @@ def density(temp_K, pressure, R=287.0):
     return pressure / (R * temp_K)
 
 
-# tare_lift = 1.874
-# tare_drag = 1.163
-# weight = 0
-# flowV = 15
-# temp_K = 0
-# pressure = 0
-
 cl, cd = 0, 0
 F1, F2 = 0, 0
 
 # 0: inc, 1: cl, 2: cd, 3: F1, 4: F2, 5: flowV
-results = \
-[[-3, cl, cd, 19.81, 12.82, 15.2],
- [-6, cl, cd, 19.23, 12.82, 15.2],
- [9, cl, cd, 21.17, 13.89, 15.1],
- [15, cl, cd, 21.17, 13.89, 15.1],
- [12, cl, cd, 21.17, 12.34, 15.1],
- [-15, cl, cd, 17.09, 11.64, 15.2],
- [3, cl, cd, 20.39, 13.24, 15.2],
- [0, cl, cd, 19.81, 7.95, 15.2],
- [0, cl, cd, 20.39, 12.82, 15.1],
- [-9, cl, cd, 18.65, 12.46, 15.2],
- [-12, cl, cd, 17.09, 12.46, 15.2],
- [6, cl, cd, 20.59, 9.85, 15.2],
- [6, cl, cd, 20.59, 13.18, 15.1]]
-# 0 lift at -13incs
+results = np.array(
+    [[-3, cl, cd, 19.81, 12.82, 15.2],
+     [-6, cl, cd, 19.23, 12.82, 15.2],
+     [9, cl, cd, 21.17, 13.89, 15.1],
+     [15, cl, cd, 21.17, 13.89, 15.1],
+     [12, cl, cd, 21.17, 12.34, 15.1],
+     [-15, cl, cd, 17.09, 11.64, 15.2],
+     [3, cl, cd, 20.39, 13.24, 15.2],
+     [0, cl, cd, 19.81, 7.95, 15.2],
+     [0, cl, cd, 20.39, 12.82, 15.1],
+     [-9, cl, cd, 18.65, 12.46, 15.2],
+     [-12, cl, cd, 17.09, 12.46, 15.2],
+     [6, cl, cd, 20.59, 9.85, 15.2],
+     [6, cl, cd, 20.59, 13.18, 15.1]])
+# 0 lift at -13 incedence
 # Stall at ~6-10 deg
 
 
@@ -78,30 +69,36 @@ def wind_tunnel_test(F1, F2, flowV, temp_K=295,
 
 
 def drag(mm):
+    """ Converts mm values to actual force """
     return 12.1 * mm * 9.81 / 1000.0
 
 
 def downforce(mm):
+    """ Converts mm values to actual force """
     return 19.8 * mm * 9.81 / 1000.0
 
 
-def incs_coeffs(results):
-    for i in results:
-        print("Incidence = " + str(i[0]))
-        coeffs = wind_tunnel_test(i[3], i[4], i[5])
-        i[1] = coeffs[0]
-        i[2] = coeffs[1]
+def incs_coeffs(rlts):
+    """ Calculates and sets CoL and CoD values for rlts """
+    rlts[:, 1:3] = np.transpose(wind_tunnel_test(rlts[:, 3],
+                                                 rlts[:, 4],
+                                                 rlts[:, 5]))
 
 
-def res_plot(results):
+def res_plot(results, mode="lin"):
+    """
+    Computes coefficients for lift and drag from results and plots them.
+
+    results -- results as above
+    mode -- plotting mode
+
+    modes:
+        lin -- linear plot of CoL and CoD against incidence
+        polar -- plot of CoL against CoD
+    """
     incs_coeffs(results)
-    coeffLs = []
-    coeffDs = []
-    incs = []
-    for i in results:
-        incs.append(i[0])
-        coeffLs.append(i[1])
-        coeffDs.append(i[2])
-    plot(incs, coeffLs, "ro")
-    plot(incs, coeffDs, "go")
-    # plot(coeffLs, coeffDs, "go")
+    if mode == "lin":
+        plot(results[:, 0], results[:, 1], "ro")
+        plot(results[:, 0], results[:, 2], "go")
+    elif mode == "polar":
+        plot(results[:, 1], results[:, 2], "go")

@@ -12,6 +12,11 @@ def area(width=currentWidth):
 
 
 def coeffs(lift, drag, flowV, area=area(), density=1.225):
+    print(lift)
+    print(drag)
+    print(flowV)
+    print(area)
+    print(density)
     coeffL = (2 * lift) / (flowV ** 2 * density * area)
     coeffD = (2 * drag) / (flowV ** 2 * density * area)
     print ("Coefficient of lift = " + str(coeffL))
@@ -54,8 +59,9 @@ results = \
  [-12, cl, cd, 17.09, 12.46, 15.2],
  [6, cl, cd, 20.59, 9.85, 15.2],
  [6, cl, cd, 20.59, 13.18, 15.1]]
- # 0 lift at -13incs
- # Stall at ~6-10 deg
+# 0 lift at -13incs
+# Stall at ~6-10 deg
+
 
 def wind_tunnel_test(F1, F2, flowV, temp_K=295,
                      pressure=101.4*1e3, tare_lift=1.874, tare_drag=1.163,
@@ -65,7 +71,7 @@ def wind_tunnel_test(F1, F2, flowV, temp_K=295,
 
     returns [coeffL, coeffD]
     """
-    lift = F1 + weight - tare_lift
+    lift = F1 - weight - tare_lift
     drag = F2 - tare_drag
     small_area = 1.0/16.0 * area()
     return coeffs(lift, drag, flowV, small_area, density(temp_K, pressure))
@@ -98,4 +104,4 @@ def res_plot(results):
         coeffDs.append(i[2])
     plot(incs, coeffLs, "ro")
     plot(incs, coeffDs, "go")
-    #plot(coeffLs, coeffDs, "go")
+    # plot(coeffLs, coeffDs, "go")

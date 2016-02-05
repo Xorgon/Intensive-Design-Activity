@@ -4,7 +4,6 @@ import numpy as np
 plot = matplotlib.pyplot.plot
 
 plateArea = 0.00426667
-spikeArea = 0.00317036
 currentWidth = 332.21 * 1e-3
 
 

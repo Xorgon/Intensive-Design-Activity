@@ -3,12 +3,14 @@ import numpy as np
 
 plot = matplotlib.pyplot.plot
 
+# Dimensions from SolidWorks model
 plateArea = 0.00426667
 currentWidth = 332.21 * 1e-3
 
 
-def area(width=currentWidth):
-    return 0.876 * width + 2 * plateArea
+def area(width=currentWidth, span=0.876):
+    """ Computes and returns planform area """
+    return span * width + 2 * plateArea
 
 
 def coeffs(lift, drag, flowV=60.0, area=area(), density=1.225, verbose=True):
@@ -33,9 +35,8 @@ def density(temp_K, pressure, R=287.0):
 
 
 cl, cd = 0, 0
-F1, F2 = 0, 0
 
-# 0: inc, 1: cl, 2: cd, 3: F1, 4: F2, 5: flowV
+# [incidence, CoL, CoD, F1, F2, flowV]
 results = np.array(
     [[-3, cl, cd, 19.81, 12.82, 15.2],
      [-6, cl, cd, 19.23, 12.82, 15.2],
@@ -69,14 +70,14 @@ def wind_tunnel_test(F1, F2, flowV, temp_K=295,
     return coeffs(lift, drag, flowV, small_area, ro, False)
 
 
-def drag(mm):
+def drag(mm, gpmm=12.1):
     """ Converts mm values to actual force """
-    return 12.1 * mm * 9.81 / 1000.0
+    return gpmm * mm * 9.81 / 1000.0
 
 
-def downforce(mm):
+def downforce(mm, gpmm=19.8):
     """ Converts mm values to actual force """
-    return 19.8 * mm * 9.81 / 1000.0
+    return gpmm * mm * 9.81 / 1000.0
 
 
 def incs_coeffs(rlts):

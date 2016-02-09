@@ -69,7 +69,7 @@ def wind_tunnel_test(F1, F2, flowV, temp_K=295,
 
     returns [coeffL, coeffD]
     """
-    lift = F1 + weight - tare_lift
+    lift = F1 - weight - tare_lift
     drag = F2 - tare_drag
     small_area = 1.0/16.0 * area()
     ro = density(temp_K, pressure)

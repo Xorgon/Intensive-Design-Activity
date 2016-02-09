@@ -1,6 +1,3 @@
-import numpy as np
-
-
 def incr_ratio(lift, drag, oLift=713.147, oDrag=125.562):
     """ Calculates the ratio of increase for lift and drag """
     return (lift - oLift)/(drag - oDrag)

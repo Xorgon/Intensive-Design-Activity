@@ -31,6 +31,13 @@ results = np.array(
 # Stall at ~6-10 deg.
 
 
+def coeffs_from_results(results):
+    """ Calculates and sets CoL and CoD values for rlts """
+    results[:, 1:3] = np.transpose(wind_tunnel_test(results[:, 3],
+                                                    results[:, 4],
+                                                    results[:, 5]))
+
+
 def area(width=currentWidth, span=0.876):
     """ Computes and returns planform area """
     return span * width + 2 * plateArea
@@ -67,13 +74,6 @@ def wind_tunnel_test(F1, F2, flowV, temp_K=295,
     small_area = 1.0/16.0 * area()
     ro = density(temp_K, pressure)
     return coeffs(lift, drag, flowV, small_area, ro, False)
-
-
-def coeffs_from_results(results):
-    """ Calculates and sets CoL and CoD values for rlts """
-    results[:, 1:3] = np.transpose(wind_tunnel_test(results[:, 3],
-                                                    results[:, 4],
-                                                    results[:, 5]))
 
 
 def results_plot(results, mode="lin"):
